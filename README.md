@@ -15,6 +15,7 @@ AWS Lambda 是非常受开发者欢迎的无服务器运行代码的服务，现
 ## 引用本账户的共享代码
 
 1. 打包
+
 先把要共享代码保存在本地电脑的python目录下，本例文件名为test2.py，因为是示例，我们的代码只写了如下一行：
 
 	var_from_test2 = 'this is str in test2'
@@ -28,6 +29,7 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
 ![目录结构图](./image/Picture1.png)
 
 2. 创建层(Layer)
+
 到AWS Lambda控制台的“层”菜单，创建一个新的层
 
 ![建层](./image/Picture2.png)
@@ -41,6 +43,7 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
 ![层](./image/Picture4.png)
 
 3. 创建函数(Function)
+
 到“函数”菜单下创建Lambda的主函数test_main，上传代码，并配置对应的执行角色(例如lambda_base_execution)以及其他参数，这时候还没引入依赖包。先写一段简单代码，看看运行结果：
 
     import json
@@ -58,6 +61,7 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
 ![建函数](./image/Picture5.png)
 
 4. 引入依赖
+
 下面来引入依赖包test2，主函数test_main代码变成：
 
     import json
@@ -82,18 +86,21 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
 每个Lambda函数最多可以配置5个层，函数加上层的总大小不能超过 250 MB （unzipped size） 。详见AWS Lambda Limits https://docs.aws.amazon.com/lambda/latest/dg/limits.html
 
 5. 测试
+
 测试执行，我们发现test2包的var_from_test2已经被主函数所调用。
 并且我们看到Linux shell执行df的结果，Lambda环境多了一个/opt目录，这个就是保存依赖包的目录。
 ![测试](./image/Picture8.png)
 
 ## 引用其他AWS账户的包
 1. 本地安装requests包并上传到另一个AWS账户（以下称源账户）
+
 在本地刚才已创建的python目录下，安装requests包到本目录：
 	pip install requests -t .
 	zip -r9 python-requests.zip ../python
 然后在源账户的Lambda控制台，创建层，并上传python-requests.zip，层名称定为requests-layer，版本为1。记录下层版本的ARN，下面会用到。
 
 2. 在源账户设置层共享
+
 使用AWS CLI命令行设置层共享权限，如果CLI没有add-layer-version-permission命令，则请升级CLI到最新版本
 
     $ aws lambda add-layer-version-permission --layer-name requests-layer \
@@ -108,6 +115,7 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
     --version-number 1
 
 3. 在目的账户设置Lambda的GetLayerVersion权限
+
 到要调用共享依赖包的那个账户（目的账户）在IAM控制台为Lambda的执行角色增加一个内联策略，赋GetLayerVersion的权限，使得Lambda可以获取其他账户的层
     {
         "Version": "2012-10-17",
@@ -124,23 +132,26 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
 考虑最小权限原则，在生产环境里Resource应该用源帐号层版本的ARN来代替*
 
 4. Lambda函数连接层
+
 到目的账户的Lambda函数菜单，选择对应的函数，并添加层到当前函数。
 ![连接函数](./image/Picture9.png)
 选择提供层ARN，然后粘贴我们刚才在源账户创建的层ARN。这样就完成了调用第三方账户共享依赖包的工作了。
 
 5. 测试
+
 测试执行，Lambda已经可以import requests，并发起访问。
-检查看到/opt/python目录已经有了刚才打包的所有依赖。 
+检查看到/opt/python目录已经有了刚才打包的所有依赖。
+
 ![测试](./image/PictureA.png)
 
 参考文档：
-•	Lambda 层说明
+* Lambda 层说明
 https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html
-•	Lambda 运行环境和内置的库：
+* Lambda 运行环境和内置的库：
 https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
-•	Lambda的IAM Policy
+* Lambda的IAM Policy
 https://docs.aws.amazon.com/lambda/latest/dg/access-control-identity-based.html
-•	IAM Policy说明
+* IAM Policy说明
 https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-bucket-user-policy-specifying-principal-intro.html
 
 
