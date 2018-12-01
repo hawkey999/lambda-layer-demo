@@ -1,7 +1,5 @@
 # 使用AWS Lambda 的“层(Layer)”功能实现依赖包管理
 
-使用AWS Lambda 的“层(Layer)”功能实现依赖包管理
-
 AWS Lambda 是非常受开发者欢迎的无服务器运行代码的服务，现已原生支持各种主流开发语言，包括Python/Node.js/Go/Java/Ruby/.NET(PowerShell)，还支持自定义运行时，使得运行C++/Rust/Php/Shell等都成为可能。
 
 我们在开发Lambda应用的时候，通常会有多个Lambda函数都共用的代码以及依赖的第三方包。Lambda 函数要调用这些依赖包，原来的做法是在每个Lambda函数打包的时候，连带依赖包一起打包。每个函数都这么做是不方便，也影响速度的。或者可以多个Lambda函数连同所有依赖包打包成一个大的包，但这样也不好管理。
@@ -132,7 +130,7 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
 
 5. 测试
 测试执行，Lambda已经可以import requests，并发起访问。
-检查看到/opt/python目录已经有了刚才打包的所有依赖。
+检查看到/opt/python目录已经有了刚才打包的所有依赖。 
 ![测试](./image/PictureA.png)
 
 参考文档：
