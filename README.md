@@ -1,4 +1,4 @@
-# lambda-layer-demo
+# 使用AWS Lambda 的“层(Layer)”功能实现依赖包管理
 
 使用AWS Lambda 的“层(Layer)”功能实现依赖包管理
 
