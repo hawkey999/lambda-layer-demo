@@ -20,9 +20,7 @@ AWS Lambda 是非常受开发者欢迎的无服务器运行代码的服务，现
 
 	var_from_test2 = 'this is str in test2'
 
-然后把该test2.py文件zip成share_package.zip，打zip包时文件名可以根据你的习惯来命名，但要注意目录结构，python的要放在python目录下，然后对python目录进行zip。所以新建一个python目录，打包后的目录结构是这样的：
-	share_package.zip
-	 python/test2.py
+然后把该test2.py文件zip成share_package.zip，打zip包时文件名可以根据你的习惯来命名，但要注意目录结构，python的要放在python目录下，然后对python目录进行zip。所以新建一个python目录，打包后的目录结构是这样的：share_package.zip --> python/test2.py
 
 Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依据不同运行环境的下级目录来引用，所以需要严格按照如下图所示的目录结构打包：
 
