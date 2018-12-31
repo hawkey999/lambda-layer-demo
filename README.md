@@ -151,6 +151,25 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
 
 ![测试](./image/PictureA.png)
 
+## 为什么我的 Python 依赖包在 AWS Lambda 中 Import 报错了？ 
+
+这个报错不是指打包的时候目录结构不对找不到文件，而是依赖包在 Lambda 中运行的时候报 build 错：   
+
+    Most likely you are trying to import a failed build of ...  
+
+这种情况，通常是因为依赖包是 C (most crypto, AI/ML like Keras, PyTorch, TensorFlow, etc.) ，在本地可以运行是因为本地安装的时候进行了编译。那怎么针对 Lambda 环境进行编译？最直接的方法是启动 Lambda 对应版本的容器来安装依赖包。以下 docker 命令只是样例，请根据你的实际情况进行调整   
+    
+```
+docker run -it \
+    -v `pwd`:/var/task \
+    lambci/lambda:build-python3.6 \
+    /bin/bash -c 'pip install -r requirements.txt -t ./libs_build/'
+```    
+以上命令 -v 是本地文件夹共享到容器中的 /var/task，所以执行前先在本地新建一个 python 文件夹，在 requirements.txt 中列出所有要安装的依赖包，然后在该文件夹路径下执行以上命令  
+
+后面再打包，上传，这些步骤就跟前面描述的一样了  
+ 
+
 参考文档：
 * Lambda 层说明
 https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html
