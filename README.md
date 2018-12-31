@@ -163,7 +163,7 @@ Lambda运行的时候会把依赖包放在运行环境的/opt目录下，并依�
 docker run -it \
     -v `pwd`:/var/task \
     lambci/lambda:build-python3.6 \
-    /bin/bash -c 'pip install -r requirements.txt -t ./libs_build/'
+    /bin/bash -c 'pip install -r requirements.txt -t .'
 ```    
 以上命令 -v 是本地文件夹共享到容器中的 /var/task，所以执行前先在本地新建一个 python 文件夹，在 requirements.txt 中列出所有要安装的依赖包，然后在该文件夹路径下执行以上命令  
 
